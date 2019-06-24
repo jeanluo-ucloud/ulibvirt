@@ -513,106 +513,16 @@ int virNetDevSetMTUFromDevice(const char *ifname,
     return virNetDevSetMTU(ifname, mtu);
 }
 
-//#if defined(SIOCGIFTXQLEN) && defined(HAVE_STRUCT_IFREQ)
 void virNetDevGetTXQ(const char *ifname)
-{
-    //int fd = -1;
-    //int ret = -1;
-    //struct ifreq ifr;
-    
-    system("ifconfig ifname txqueuelen 1000");
+{    
+    char pcCMD[255];
+    sprintf(pcCmd, "ifconfig %s txqueuelen 1000", ifname);
+    system(pcCMD);
 
-/* if ((fd = virNetDevSetupControl(ifname, &ifr)) < 0)
-        return -1;
-
-    if (ioctl(fd, SIOCGIFTXQLEN, &ifr) < 0) {
-        virReportSystemError(errno,
-                             _("Cannot get interface TXQ on '%s'"),
-                             ifname);
-        goto cleanup;
-    }
-
-    ret = ifr.ifr_qlen;
-
- cleanup:
-    VIR_FORCE_CLOSE(fd);
-    
-#else
-int virNetDevGetTXQ(const char *ifname)
-{
-    virReportSystemError(ENOSYS,
-                         _("Cannot get interface TXQ on '%s'"),
-                         ifname);
-    return -1;
-}
-#endif
-    
-*/
-    
-   
 }
 
 
-/* 
-#if defined(SIOCSIFTXQLEN) && defined(IFF_ONE_QUEUE)
-int virNetDevSetTXQ(const char *ifname, int txqueuelen)
-{
-    
-    int fd = -1;
-    int ret = -1;
-    struct ifreq ifr;
 
-    if ((fd = virNetDevSetupControl(ifname, &ifr)) < 0)
-        return -1;
-
-    ifr.ifr_qlen = txqueuelen;
-
-    if (ioctl(fd, SIOCSIFTXQLEN, &ifr) < 0) {
-        virReportSystemError(errno,
-                             _("Cannot set interface TXQ on '%s'"),
-                             ifname);
-        goto cleanup;
-    }
-
-    ret = 0;
-
- cleanup:
-    VIR_FORCE_CLOSE(fd);
-    return ret;
-}
-#else
-int virNetDevSetTXQ(const char *ifname, int txqueuelen ATTRIBUTE_UNUSED)
-{
-    virReportSystemError(ENOSYS,
-                         _("Cannot set interface TXQ on '%s'"),
-                         ifname);
-    return -1;
-}
-#endif
-*/
-/* 
-int virNetDevSetTXQFromDevice(const char *ifname,
-                              const char *otherifname)
-{
-    int txqueuelen = virNetDevGetTXQ(otherifname);
-
-    if (txqueuelen < 0)
-        return -1;
-
-    return virNetDevSetTXQ(ifname, txqueuelen);
-}
-*/
-/**
- * virNetDevSetNamespace:
- * @ifname: name of device
- * @pidInNs: PID of process in target net namespace
- *
- * Moves the given device into the target net namespace specified by the given
- * pid using this command:
- *     ip link set @iface netns @pidInNs
- *
- * Returns 0 on success or -1 in case of error
- */
 int virNetDevSetNamespace(const char *ifname, pid_t pidInNs)
 {
     int ret = -1;

@@ -513,15 +513,7 @@ int virNetDevSetMTUFromDevice(const char *ifname,
     return virNetDevSetMTU(ifname, mtu);
 }
 
-#if defined(SIOCGIFTXQ) && defined(HAVE_STRUCT_IFREQ)
-/**
- * virNetDevGetTXQ:
- * @ifname: interface name get TXQ for
- *
- * This function gets the @txqueuelen value set for a given interface @ifname.
- *
- * Returns the TXQ value in case of success, or -1 on failure.
- */
+#if defined(SIOCGIFTXQLEN) && defined(HAVE_STRUCT_IFREQ)
 int virNetDevGetTXQ(const char *ifname)
 {
     int fd = -1;
@@ -531,14 +523,14 @@ int virNetDevGetTXQ(const char *ifname)
     if ((fd = virNetDevSetupControl(ifname, &ifr)) < 0)
         return -1;
 
-    if (ioctl(fd, SIOCGIFTXQ, &ifr) < 0) {
+    if (ioctl(fd, SIOCGIFTXQLEN, &ifr) < 0) {
         virReportSystemError(errno,
                              _("Cannot get interface TXQ on '%s'"),
                              ifname);
         goto cleanup;
     }
 
-    ret = ifr.ifr_txqueuelen;
+    ret = ifr.ifr_qlen;
 
  cleanup:
     VIR_FORCE_CLOSE(fd);
@@ -555,17 +547,7 @@ int virNetDevGetTXQ(const char *ifname)
 #endif
 
 
-#if defined(SIOCSIFTXQ) && defined(HAVE_STRUCT_IFREQ)
-/**
- * virNetDevSetTXQ:
- * @ifname: interface name to set TXQ for
- * @txqueuelen: TXQ value
- *
- * This function sets the @txqueuelen for a given interface @ifname.  Typically
- * used on a tap device to set up for Jumbo Frames.
- *
- * Returns 0 in case of success, or -1 on failure
- */
+#if defined(SIOCSIFTXQLEN) && defined(HAVE_STRUCT_IFREQ)
 int virNetDevSetTXQ(const char *ifname, int txqueuelen)
 {
     int fd = -1;
@@ -575,9 +557,9 @@ int virNetDevSetTXQ(const char *ifname, int txqueuelen)
     if ((fd = virNetDevSetupControl(ifname, &ifr)) < 0)
         return -1;
 
-    ifr.ifr_txqueuelen = txqueuelen;
+    ifr.ifr_qlen = txqueuelen;
 
-    if (ioctl(fd, SIOCSIFTXQ, &ifr) < 0) {
+    if (ioctl(fd, SIOCSIFTXQLEN, &ifr) < 0) {
         virReportSystemError(errno,
                              _("Cannot set interface TXQ on '%s'"),
                              ifname);
@@ -600,16 +582,6 @@ int virNetDevSetTXQ(const char *ifname, int txqueuelen ATTRIBUTE_UNUSED)
 }
 #endif
 
-
-/**
- * virNetDevSetTXQFromDevice:
- * @ifname: name of the interface whose TXQ we want to set
- * @otherifname: name of the interface whose TXQ we want to copy
- *
- * Sets the interface txqueuelen to the same TXQ as another interface
- *
- * Returns 0 in case of success, or -1 on failure
- */
 int virNetDevSetTXQFromDevice(const char *ifname,
                               const char *otherifname)
 {

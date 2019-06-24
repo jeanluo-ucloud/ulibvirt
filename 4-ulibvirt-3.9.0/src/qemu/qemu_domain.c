@@ -3813,14 +3813,7 @@ qemuDomainDeviceDefValidateNetwork(const virDomainNetDef *net)
         return -1;
     }
 
-    if (net->txqueuelen &&
-        !qemuDomainNetSupportsTXQ(net->type)) {
-        virReportError(VIR_ERR_CONFIG_UNSUPPORTED,
-                       _("setting txqueuelen on interface type %s is not supported yet"),
-                       virDomainNetTypeToString(net->type));
-        return -1;
-    }
-
+    
     if (net->coalesce && !qemuDomainNetSupportsCoalesce(net->type)) {
         virReportError(VIR_ERR_CONFIG_UNSUPPORTED,
                        _("coalesce settings on interface type %s are not supported"),
@@ -8057,29 +8050,6 @@ qemuDomainSupportsNetdev(virDomainDefPtr def,
 
 bool
 qemuDomainNetSupportsMTU(virDomainNetType type)
-{
-    switch (type) {
-    case VIR_DOMAIN_NET_TYPE_NETWORK:
-    case VIR_DOMAIN_NET_TYPE_BRIDGE:
-    case VIR_DOMAIN_NET_TYPE_ETHERNET:
-    case VIR_DOMAIN_NET_TYPE_VHOSTUSER:
-        return true;
-    case VIR_DOMAIN_NET_TYPE_USER:
-    case VIR_DOMAIN_NET_TYPE_SERVER:
-    case VIR_DOMAIN_NET_TYPE_CLIENT:
-    case VIR_DOMAIN_NET_TYPE_MCAST:
-    case VIR_DOMAIN_NET_TYPE_INTERNAL:
-    case VIR_DOMAIN_NET_TYPE_DIRECT:
-    case VIR_DOMAIN_NET_TYPE_HOSTDEV:
-    case VIR_DOMAIN_NET_TYPE_UDP:
-    case VIR_DOMAIN_NET_TYPE_LAST:
-        break;
-    }
-    return false;
-}
-
-bool
-qemuDomainNetSupportsTXQ(virDomainNetType type)
 {
     switch (type) {
     case VIR_DOMAIN_NET_TYPE_NETWORK:

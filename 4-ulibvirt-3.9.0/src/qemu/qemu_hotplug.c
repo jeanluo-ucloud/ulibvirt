@@ -3206,12 +3206,7 @@ qemuDomainChangeNet(virQEMUDriverPtr driver,
         goto cleanup;
     }
 
-    if (olddev->txqueuelen != newdev->txqueuelen) {
-        virReportError(VIR_ERR_OPERATION_UNSUPPORTED, "%s",
-                       _("cannot modify txqueuelen"));
-        goto cleanup;
-    }
-
+    
     /* allocate new actual device to compare to old - we will need to
      * free it if we fail for any reason
      */

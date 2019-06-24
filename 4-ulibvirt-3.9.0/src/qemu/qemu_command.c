@@ -3892,15 +3892,6 @@ qemuBuildNicDevStr(virDomainDefPtr def,
         }
         virBufferAsprintf(&buf, ",host_mtu=%u", net->mtu);
     }
-    
-    if (usingVirtio && net->txqueuelen) {
-        if (!virQEMUCapsGet(qemuCaps, QEMU_CAPS_VIRTIO_NET_HOST_TXQ)) {
-            virReportError(VIR_ERR_CONFIG_UNSUPPORTED, "%s",
-                           _("setting txqueuelen is not supported with this QEMU binary"));
-            goto error;
-        }
-        virBufferAsprintf(&buf, ",host_txqueuelen=%u", net->txqueuelen);
-    }
 
 
     if (vlan == -1)
