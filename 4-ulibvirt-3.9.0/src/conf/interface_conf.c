@@ -1132,10 +1132,12 @@ virInterfaceDefDevFormat(virBufferPtr buf,
         if (def->mtu)
             virBufferAsprintf(buf, "<mtu size='%d'/>\n", def->mtu);
                 
+        if (def->txqueuelen)
+            virBufferAsprintf(buf, "<txqueuelen size='%d'/>\n", def->txqueuelen);
+
         virInterfaceProtocolDefFormat(buf, def);
     }
-    if (def->txqueuelen)
-            virBufferAsprintf(buf, "<txqueuelen size='%d'/>\n", def->txqueuelen);
+    
 
     if (def->type != VIR_INTERFACE_TYPE_BRIDGE)
         virInterfaceLinkFormat(buf, &def->lnk);

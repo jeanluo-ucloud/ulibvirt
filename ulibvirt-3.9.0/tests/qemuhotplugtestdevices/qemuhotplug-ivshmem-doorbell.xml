@@ -1,4 +1,0 @@
-<shmem name='shmem1'>
-  <model type='ivshmem-doorbell'/>
-  <server/>
-</shmem>

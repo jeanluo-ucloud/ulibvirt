@@ -1,7 +1,0 @@
-<sources>
-  <source>
-    <host name='testhost'/>
-    <dir path='vol0'/>
-    <format type='glusterfs'/>
-  </source>
-</sources>

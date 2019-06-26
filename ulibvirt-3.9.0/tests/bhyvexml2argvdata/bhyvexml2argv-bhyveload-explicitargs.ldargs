@@ -1,4 +1,0 @@
-/usr/sbin/bhyveload \
--X \
--Y \
--Z
