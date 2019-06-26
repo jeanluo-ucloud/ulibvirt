@@ -1,0 +1,5 @@
+EXPORTS
+    virDomainLxcEnterNamespace
+    virDomainLxcOpenNamespace
+    virDomainLxcEnterSecurityLabel
+    virDomainLxcEnterCGroup
